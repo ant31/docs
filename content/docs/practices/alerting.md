@@ -72,3 +72,48 @@ alerts on each.
 Supplementing the whitebox monitoring of Prometheus with external blackbox
 monitoring can catch problems that are otherwise invisible, and also serves as
 a fallback in case internal systems completely fail.
+
+### Alerting Rules Labels and Annotations
+
+You can visualize and manage fired alerts with more tools than Alertmanager.
+A common set of labels and annotations allows tools to work interoperably, describing
+an Alert Rule in a common manner that all tools can understand.
+
+These are recommended labels and annotations. They make it easier to manage Alerts and build integrations
+but aren't required for any core tooling.
+
+
+| Key                                 | Description           | Example   | Type |
+| ----------------------------------- | --------------------- | --------  |---- |
+| Labels | |  |  |
+| `severity`                          | The name of the alert level | warning | string |
+| Annotations |  |  |  |
+| `summary`                          | Alert title | High request latency | string |
+| `description`                     | Detailed description | The median request latency is above 1s (current value: {{ $value }}s) | string |
+
+
+```yaml
+groups:
+- name: example
+  rules:
+
+  # Alert for any instance that is unreachable for >5 minutes.
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Instance {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+  # Alert for any instance that has a median request latency >1s.
+  - alert: APIHighRequestLatency
+    expr: api_http_request_latencies_second{quantile="0.5"} > 1
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High request latency on {{ $labels.instance }}"
+      description: "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)"
+```

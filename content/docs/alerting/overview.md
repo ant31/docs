@@ -16,3 +16,4 @@ The main steps to setting up alerting and notifications are:
 * Setup and [configure](../configuration) the Alertmanager
 * [Configure Prometheus](../../prometheus/latest/configuration/configuration/#<alertmanager_config>) to talk to the Alertmanager
 * Create [alerting rules](../../prometheus/latest/configuration/alerting_rules/) in Prometheus
+* Alerting [Best practices](../../prometheus/practices/alerting#alerting-rules-labels-and-annotations) and conventions
